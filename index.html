@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story SPA - Dicoding Story API</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Skip to content for accessibility -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <!-- Header -->
+    <header role="banner">
+        <nav role="navigation" aria-label="Main navigation">
+            <div class="logo">Story SPA</div>
+            <div class="nav-links" id="nav-links">
+                <!-- Navigation will be populated by JavaScript -->
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+        <!-- Login Page -->
+        <section id="login-page" class="page">
+            <div class="form-container">
+                <h1>Login</h1>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email:</label>
+                        <input type="email" id="login-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password:</label>
+                        <input type="password" id="login-password" name="password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+                <p style="margin-top: 1rem; text-align: center;">
+                    Belum punya akun? <a href="#register">Daftar di sini</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Register Page -->
+        <section id="register-page" class="page">
+            <div class="form-container">
+                <h1>Register</h1>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-name">Nama:</label>
+                        <input type="text" id="register-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email:</label>
+                        <input type="email" id="register-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password:</label>
+                        <input type="password" id="register-password" name="password" required minlength="8">
+                    </div>
+                    <button type="submit">Register</button>
+                </form>
+                <p style="margin-top: 1rem; text-align: center;">
+                    Sudah punya akun? <a href="#login">Login di sini</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Stories Page -->
+        <section id="stories-page" class="page">
+            <h1>Daftar Cerita</h1>
+            <div id="stories-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            <div id="stories-map"></div>
+        </section>
+
+        <!-- Add Story Page -->
+        <section id="add-story-page" class="page">
+            <div class="form-container">
+                <h1>Tambah Cerita Baru</h1>
+                <form id="add-story-form">
+                    <div class="form-group">
+                        <label for="story-description">Deskripsi Cerita:</label>
+                        <textarea id="story-description" name="description" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="story-photo">Foto:</label>
+                        <div class="camera-container">
+                            <video id="camera-feed" autoplay playsinline style="display: none;"></video>
+                            <canvas id="photo-canvas" style="display: none;"></canvas>
+                            <img id="captured-photo" alt="Captured photo" style="display: none; width: 100%; max-width: 400px; border-radius: 8px;">
+                        </div>
+                        <div class="camera-controls">
+                            <button type="button" id="start-camera">Buka Kamera</button>
+                            <button type="button" id="capture-photo" style="display: none;">Ambil Foto</button>
+                            <button type="button" id="retake-photo" style="display: none;">Ulangi</button>
+                            <input type="file" id="file-input" accept="image/*" style="display: none; margin-left: 1rem;">
+                        </div>
+                        <p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.5rem;">
+                            Gunakan kamera untuk mengambil foto, atau pilih file jika kamera tidak tersedia.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lokasi:</label>
+                        <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">
+                            Klik pada peta untuk memilih lokasi cerita Anda
+                        </p>
+                        <div id="add-story-map" style="height: 300px; border-radius: 8px;"></div>
+                        <input type="hidden" id="story-lat" name="lat">
+                        <input type="hidden" id="story-lon" name="lon">
+                    </div>
+
+                    <button type="submit">Tambah Cerita</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Notifications Page -->
+        <section id="notifications-page" class="page">
+            <div id="notifications-container" class="notifications-container">
+                <div class="notifications-header">
+                    <h1>Notifikasi</h1>
+                    <div class="notification-actions">
+                        <button id="mark-all-read" class="btn-secondary">Tandai Semua Dibaca</button>
+                        <button id="clear-all-notifications" class="btn-danger">Hapus Semua</button>
+                    </div>
+                </div>
+                
+                <div class="notification-filters">
+                    <button class="filter-btn active" data-filter="all">Semua</button>
+                    <button class="filter-btn" data-filter="unread">Belum Dibaca</button>
+                    <button class="filter-btn" data-filter="read">Sudah Dibaca</button>
+                </div>
+
+                <div id="notifications-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Memuat notifikasi...</p>
+                    </div>
+                </div>
+
+                <div id="empty-notifications" class="empty-state" style="display: none;">
+                    <div class="empty-icon">🔔</div>
+                    <h3>Tidak Ada Notifikasi</h3>
+                    <p>Anda belum memiliki notifikasi baru.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="notification-toast" class="notification-toast">
+        <div class="toast-content">
+            <div class="toast-icon"></div>
+            <div class="toast-message"></div>
+            <button class="toast-close">&times;</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="js/app.js"></script>
+    <script type="module" src="/src/main.js"></script>
+
+</body>
+</html>
